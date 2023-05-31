@@ -343,19 +343,12 @@ pub async fn get_users_me(configuration: &configuration::Configuration, params: 
 
     let local_var_req = local_var_req_builder.build()?;
 
-    println!("-----------------------------------");
-    println!("LOCAL Request: {:?}", local_var_req);
-    println!("-----------------------------------");
-
     let local_var_resp = local_var_client.execute(local_var_req).await?;
 
     let local_var_status = local_var_resp.status();
     let local_var_content = local_var_resp.text().await?;
 
     if !local_var_status.is_client_error() && !local_var_status.is_server_error() {
-        println!("-----------------------------------");
-        println!("LOCAL local_var_content: {:?}", local_var_content);
-        println!("-----------------------------------");
         serde_json::from_str(&local_var_content).map_err(Error::from)
     } else {
         let local_var_entity: Option<GetUsersMeError> = serde_json::from_str(&local_var_content).ok();

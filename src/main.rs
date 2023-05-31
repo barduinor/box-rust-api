@@ -13,7 +13,7 @@ async fn main(){
     let mut config = Configuration::default();
     // config.bearer_access_token = Some(developer_token); // bearer_access_token is ignored
     config.oauth_access_token = Some(developer_token);
-    println!("{:?}", config);
+    // println!("{:?}", config);
     
     let params = users_api::GetUsersMeParams::default();
 
@@ -22,6 +22,6 @@ async fn main(){
     //     fields: fields,
     // };
 
-    let users = users_api::get_users_me(&config, params).await;
-    println!("{:?}", users);
+    let user_me = users_api::get_users_me(&config, params).await;
+    println!("Current user:\n{:?}\n", user_me);
 }
