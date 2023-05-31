@@ -46,7 +46,7 @@ async fn main(){
         .await;
     // println!("Items:\n{:?}\n", items);
     
-    for item in items.unwrap().entries.unwrap() {
+    for item in items.unwrap().entries.unwrap(){
         println!("\nItem: {:?}", item);
     }
 
