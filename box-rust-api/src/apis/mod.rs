@@ -111,7 +111,7 @@ pub fn parse_deep_object(prefix: &str, value: &serde_json::Value) -> Vec<(String
 // pub mod file_versions_api;
 // pub mod files_api;
 // pub mod folder_locks_api;
-// pub mod folders_api;
+pub mod folders_api;
 // pub mod group_memberships_api;
 // pub mod groups_api;
 // pub mod integration_mappings_slack_api;
