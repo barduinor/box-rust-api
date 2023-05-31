@@ -23,7 +23,9 @@ async fn main(){
     // Get folder information
     let mut params = folders_api::GetFoldersIdParams::default();
     params.folder_id = "0".to_string();
-    
+    // params.folder_id = "209408240392".to_string();
+    // params.fields = Some(vec!["id".to_owned(),"name".to_owned(),"tags".to_owned()]);
+
     let folder_info = folders_api::get_folders_id(
         &config, 
         params, 
@@ -35,7 +37,8 @@ async fn main(){
     // List items in folder
     let mut params = folders_api::GetFoldersIdItemsParams::default();
     params.folder_id = "0".to_string();
-    // params.fields = Some("name".to_string());
+    // params.folder_id = "209408240392".to_string();
+    
 
     let items = folders_api::get_folders_id_items(
         &config, 
@@ -44,7 +47,7 @@ async fn main(){
     // println!("Items:\n{:?}\n", items);
     
     for item in items.unwrap().entries.unwrap() {
-        println!("{:?}:\t{:?}\t{:?}", item.r#type,item.id,item.name);
+        println!("\nItem: {:?}", item);
     }
 
 
