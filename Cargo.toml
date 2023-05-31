@@ -2,6 +2,10 @@
 name = "users_main"
 path = "src/users_main.rs"
 
+[[bin]]
+name = "folders_main"
+path = "src/folders_main.rs"
+
 [package]
 name = "box-rust-api-example"
 version = "0.1.0"
