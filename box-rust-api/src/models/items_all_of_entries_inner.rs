@@ -55,13 +55,20 @@ impl ItemsAllOfEntriesInner {
 /// `web_link`
 #[derive(Clone, Copy, Debug, Eq, PartialEq, Ord, PartialOrd, Hash, Serialize, Deserialize)]
 pub enum RHashType {
+    // openapi genrator did not include all item types
     #[serde(rename = "web_link")]
     WebLink,
+    #[serde(rename = "file")]
+    File,
+    #[serde(rename = "folder")]
+    Folder,
 }
 
 impl Default for RHashType {
     fn default() -> RHashType {
-        Self::WebLink
+        // Self::WebLink
+        // changed default to File
+        Self::File
     }
 }
 

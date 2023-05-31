@@ -323,6 +323,7 @@ pub async fn get_folders_id_items(configuration: &configuration::Configuration, 
     let local_var_content = local_var_resp.text().await?;
 
     if !local_var_status.is_client_error() && !local_var_status.is_server_error() {
+        // println!("local_var:\n{}\n", local_var_content);
         serde_json::from_str(&local_var_content).map_err(Error::from)
     } else {
         let local_var_entity: Option<GetFoldersIdItemsError> = serde_json::from_str(&local_var_content).ok();

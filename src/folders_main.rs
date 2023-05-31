@@ -16,6 +16,36 @@ async fn main(){
     // TODO: Bearer token is being ignored, consider fixing
     // config.bearer_access_token = Some(developer_token);
     config.oauth_access_token = Some(developer_token);
-    println!("{:?}", config);
+    // println!("Configuration:\n{:?}\n", config);
+
+    
+
+    // Get folder information
+    let mut params = folders_api::GetFoldersIdParams::default();
+    params.folder_id = "0".to_string();
+    
+    let folder_info = folders_api::get_folders_id(
+        &config, 
+        params, 
+        )
+        .await;
+    println!("\nFolder Info:\n{:?}\n", folder_info);
+
+
+    // List items in folder
+    let mut params = folders_api::GetFoldersIdItemsParams::default();
+    params.folder_id = "0".to_string();
+    // params.fields = Some("name".to_string());
+
+    let items = folders_api::get_folders_id_items(
+        &config, 
+        params)
+        .await;
+    // println!("Items:\n{:?}\n", items);
+    
+    for item in items.unwrap().entries.unwrap() {
+        println!("{:?}:\t{:?}\t{:?}", item.r#type,item.id,item.name);
+    }
+
 
 }
