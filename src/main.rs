@@ -11,7 +11,8 @@ async fn main(){
     let developer_token = env::var("DEVELOPER_TOKEN").expect("DEVELOPER_TOKEN not set");
 
     let mut config = Configuration::default();
-    // config.bearer_access_token = Some(developer_token); // bearer_access_token is ignored
+    // TODO: Bearer token is being ignored, consider fixing
+    // config.bearer_access_token = Some(developer_token);
     config.oauth_access_token = Some(developer_token);
     // println!("{:?}", config);
     
