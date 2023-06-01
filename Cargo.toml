@@ -10,6 +10,11 @@ path = "src/folders_main.rs"
 name = "files_main"
 path = "src/files_main.rs"
 
+[[bin]]
+name = "authorization_main"
+path = "src/authorization_main.rs"
+
+
 
 [package]
 name = "box-rust-api-example"
@@ -21,4 +26,7 @@ edition = "2021"
 [dependencies]
 dotenv = "0.15.0"
 openapi = { version = "2.0.0", path = "box-rust-api" }
+rand = "0.8.5"
 tokio = { version = "1.28.2", features = ["rt", "rt-multi-thread", "macros"] }
+urlencoding = "2.1.2"
+webbrowser = "0.8.10"

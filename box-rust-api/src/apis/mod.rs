@@ -90,7 +90,7 @@ pub fn parse_deep_object(prefix: &str, value: &serde_json::Value) -> Vec<(String
     unimplemented!("Only objects are supported with style=deepObject")
 }
 
-// pub mod authorization_api;
+pub mod authorization_api;
 // pub mod box_sign_api;
 // pub mod classifications_api;
 // pub mod classifications_on_files_api;
