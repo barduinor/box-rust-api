@@ -12,8 +12,6 @@ use reqwest;
 
 use super::{configuration, Error};
 use crate::apis::ResponseContent;
-use rand::{distributions::Alphanumeric, Rng};
-// use urlencoding::encode;
 
 /// struct for passing parameters to the method [`get_authorize`]
 #[derive(Clone, Debug, Default)]
@@ -124,15 +122,6 @@ pub enum PostOauth2TokenRefreshError {
     UnknownValue(serde_json::Value),
 }
 
-// function to generate random state
-fn generate_state(length: u8) -> String {
-    rand::thread_rng()
-        .sample_iter(&Alphanumeric)
-        .take(length.into())
-        .map(char::from)
-        .collect()
-}
-
 pub fn get_authorizarion_url(params: GetAuthorizeParams) -> String {
     let mut url = String::from("https://account.box.com/api/oauth2/authorize?");
     url.push_str("response_type=");
@@ -146,10 +135,8 @@ pub fn get_authorizarion_url(params: GetAuthorizeParams) -> String {
     if let Some(ref local_var_str) = params.state {
         url.push_str("&state=");
         url.push_str(&local_var_str.to_string());
-    } else {
-        url.push_str("&state=");
-        url.push_str(&generate_state(16));
     }
+
     if let Some(ref local_var_str) = params.scope {
         url.push_str("&scope=");
         url.push_str(&local_var_str.to_string());

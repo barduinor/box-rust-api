@@ -1,4 +1,7 @@
-use std::borrow::Borrow;
+mod box_oauth;
+mod box_utils;
+
+// use std::borrow::Borrow;
 // use cargo run --bin authorization_main to run this file
 use std::env;
 use std::process::exit;
@@ -9,7 +12,7 @@ use std::process::exit;
 use openapi::apis::authorization_api::post_oauth2_token;
 use openapi::apis::authorization_api::PostOauth2TokenParams;
 use openapi::apis::configuration::Configuration;
-use tiny_http::Request;
+// use tiny_http::Request;
 use tiny_http::Response;
 use url::Url;
 
@@ -36,7 +39,7 @@ struct UrlParams {
 async fn main() {
     dotenv::dotenv().expect("Failed to read .env file");
 
-    let developer_token = env::var("DEVELOPER_TOKEN").expect("DEVELOPER_TOKEN not set");
+    // let developer_token = env::var("DEVELOPER_TOKEN").expect("DEVELOPER_TOKEN not set");
     let client_id = env::var("CLIENT_ID").expect("CLIENT_ID not set");
     let client_secret = env::var("CLIENT_SECRET").expect("CLIENT_SECRET not set");
     let redirect_uri = env::var("REDIRECT_URI").expect("REDIRECT_URI not set");
