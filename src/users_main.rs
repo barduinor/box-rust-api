@@ -19,12 +19,11 @@ async fn main() {
     };
     // println!("{:?}", config);
 
-    let params = users_api::GetUsersMeParams::default();
-
-    // let fields: Option<Vec<String>> = Some(vec!["name".to_owned(), "login".to_owned(), "id".to_owned(), "type".to_owned()]);
-    //   let params = users_api::GetUsersMeParams{
-    //     fields: fields,
-    // };
+    // #[warn(clippy::needless_update)]
+    let params = openapi::apis::users_api::GetUsersMeParams {
+        // fields: Some(vec!["id".to_owned(), "name".to_owned(), "login".to_owned()]),
+        ..Default::default()
+    };
 
     let user_me = users_api::get_users_me(&config, params).await;
     println!("Current user:\n{:?}\n", user_me);
