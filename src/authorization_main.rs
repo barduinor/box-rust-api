@@ -1,3 +1,4 @@
+use std::borrow::Borrow;
 // use cargo run --bin authorization_main to run this file
 use std::env;
 use std::process::exit;
@@ -5,6 +6,9 @@ use std::process::exit;
 // use dotenv;
 // use webbrowser;
 
+use openapi::apis::authorization_api::post_oauth2_token;
+use openapi::apis::authorization_api::PostOauth2TokenParams;
+use openapi::apis::configuration::Configuration;
 use tiny_http::Request;
 use tiny_http::Response;
 use url::Url;
@@ -32,23 +36,25 @@ struct UrlParams {
 async fn main() {
     dotenv::dotenv().expect("Failed to read .env file");
 
-    // let developer_token = env::var("DEVELOPER_TOKEN").expect("DEVELOPER_TOKEN not set");
+    let developer_token = env::var("DEVELOPER_TOKEN").expect("DEVELOPER_TOKEN not set");
     let client_id = env::var("CLIENT_ID").expect("CLIENT_ID not set");
+    let client_secret = env::var("CLIENT_SECRET").expect("CLIENT_SECRET not set");
     let redirect_uri = env::var("REDIRECT_URI").expect("REDIRECT_URI not set");
 
     let hostname = env::var("HOSTNAME").expect("HOSTNAME not set");
     let port = env::var("PORT").expect("PORT not set");
 
-    // let config = Configuration {
-    //     oauth_access_token: Some(developer_token),
-    //     // TODO: Bearer token is being ignored, consider fixing
-    //     // config.bearer_access_token = Some(developer_token);
-    //     ..Default::default()
-    // };
+    let config = Configuration {
+        base_path: "https://api.box.com".to_string(),
+        // oauth_access_token: Some(developer_token),
+        // TODO: Bearer token is being ignored, consider fixing
+        // config.bearer_access_token = Some(developer_token);
+        ..Default::default()
+    };
     // println!("{:?}", config);
 
     let params = GetAuthorizeParams {
-        client_id,
+        client_id: client_id.clone(),
         redirect_uri: Some(redirect_uri),
         // state: Some("STATE_STATE".to_string()),
         // scope: Some("root_readwrite".to_string()),
@@ -69,7 +75,7 @@ async fn main() {
     let server = tiny_http::Server::http(hostname_port).unwrap();
     println!("Listening on {}", server.server_addr());
 
-    match server.recv() {
+    let query_parmas = match server.recv() {
         Ok(rq) => {
             println!(
                 "received request:\nmethod: {:?}\nurl: {:?}\nremote_addr: {:?} ",
@@ -104,16 +110,36 @@ async fn main() {
             };
 
             if query_params.error.is_some() {
+                let response = Response::empty(200);
+                match rq.respond(response) {
+                    Ok(_) => (),
+                    Err(e) => {
+                        println!("error: {}", e);
+                        exit(1)
+                    }
+                };
                 println!("error: {}", query_params.error_description.unwrap());
                 exit(1)
             }
-
-            let response = Response::empty(200);
-            rq.respond(response);
+            query_params
         }
         Err(e) => {
             println!("error: {}", e);
             exit(1)
         }
-    }
+    };
+    println!("\nquery_params: \n{:?}", query_parmas);
+    // Get Oauth tokens
+
+    let params = PostOauth2TokenParams {
+        grant_type: "authorization_code".to_string(),
+        code: Some(query_parmas.code.unwrap()),
+        client_id: Some(client_id),
+        client_secret: Some(client_secret),
+
+        ..Default::default()
+    };
+
+    let access_token = post_oauth2_token(&config, params).await;
+    println!("\nAccess Token: {:?}\n", access_token);
 }

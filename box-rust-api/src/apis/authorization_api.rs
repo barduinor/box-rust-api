@@ -352,10 +352,17 @@ pub async fn post_oauth2_token(
     if let Some(local_var_param_value) = box_shared_link {
         local_var_form_params.insert("box_shared_link", local_var_param_value.to_string());
     }
+
+    // println!("\n{:?}\n", local_var_form_params);
     local_var_req_builder = local_var_req_builder.form(&local_var_form_params);
+    // local_var_req_builder = local_var_req_builder.json(&local_var_form_params);
 
     let local_var_req = local_var_req_builder.build()?;
+    // println!("\n{:?}\n", local_var_req);
+    // println!("\n{:?}\n", Some(local_var_req.body()));
+
     let local_var_resp = local_var_client.execute(local_var_req).await?;
+    // println!("\n{:?}\n", local_var_resp);
 
     let local_var_status = local_var_resp.status();
     let local_var_content = local_var_resp.text().await?;
