@@ -2,7 +2,6 @@
 use serde::{Deserialize, Serialize};
 
 use crate::box_utils;
-use url::Url;
 
 #[derive(Debug, Serialize, Deserialize)]
 struct AuthorizationGrant {
@@ -164,21 +163,34 @@ mod tests {
     fn test_get_authorization_url() {
         let client_id = "CLIENT_ID".to_string();
         let local_redirect_uri = Some("https://localhost:8080".to_string());
-        // let local_state = Some("STATE_STATE".to_string());
-        // let local_scope = Some("root_readwrite".to_string());
-        let local_redirect_uri_enc = Some("https%3A%2F%2Flocalhost%3A8080".to_string());
+        let local_state = Some("STATE_STATE".to_string());
+        let local_scope = Some("root_readwrite".to_string());
+        // let local_redirect_uri_enc = Some("https%3A%2F%2Flocalhost%3A8080".to_string());
 
         let authorization_request = AuthorizationRequest {
-            client_id: client_id.clone(),
+            client_id,
             options: Some(AuthorizationRequestOptional::new(
                 local_redirect_uri,
-                None,
-                None,
+                local_state,
+                local_scope,
                 // local_scope.clone(),
             )),
         };
 
         let authorizarion_request_url = authorization_request.get_authorizarion_url();
         println!("\n{:?}\n", authorizarion_request_url);
+        // https://api.box.com/oauth2/authorize
+        // ?client_id=CLIENT_ID
+        // &response_type=code
+        // &redirect_uri=https%3A%2F%2Flocalhost%3A8080
+        // &state=STATE_STATE
+        // &scope=root_readwrite
+
+        assert!(authorizarion_request_url.contains("https://api.box.com/oauth2/authorize"));
+        assert!(authorizarion_request_url.contains("?client_id=CLIENT_ID&"));
+        assert!(authorizarion_request_url.contains("&response_type=code&"));
+        assert!(authorizarion_request_url.contains("&redirect_uri=https%3A%2F%2Flocalhost%3A8080&"));
+        assert!(authorizarion_request_url.contains("&state=STATE_STATE&"));
+        assert!(!authorizarion_request_url.contains("&scope=root_readwrite&"));
     }
 }
