@@ -117,7 +117,9 @@ async fn main() {
 
                 println!(
                     "Authorization error: {}",
-                    query_params.error_description.unwrap()
+                    query_params
+                        .error_description
+                        .expect("Error description not found")
                 );
                 exit(1)
             }
