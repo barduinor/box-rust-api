@@ -1,20 +1,16 @@
-mod box_oauth;
-mod box_utils;
+mod utils;
 
 // use std::borrow::Borrow;
 // use cargo run --bin authorization_main to run this file
 use std::env;
 use std::process::exit;
 
-// use dotenv;
-// use webbrowser;
+use tiny_http::Response;
+use url::Url;
 
 use openapi::apis::authorization_api::post_oauth2_token;
 use openapi::apis::authorization_api::PostOauth2TokenParams;
 use openapi::apis::configuration::Configuration;
-// use tiny_http::Request;
-use tiny_http::Response;
-use url::Url;
 
 use openapi::apis::authorization_api::get_authorizarion_url;
 use openapi::apis::authorization_api::GetAuthorizeParams;
@@ -60,7 +56,7 @@ async fn main() {
     let params = GetAuthorizeParams {
         client_id: client_id.clone(),
         redirect_uri: Some(redirect_uri),
-        // state: Some(box_utils::generate_state(16)),
+        state: Some(utils::generic::generate_state(16)),
         // state: Some("STATE_STATE".to_string()),
         // scope: Some("root_readwrite".to_string()),
         ..Default::default()

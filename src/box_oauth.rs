@@ -1,7 +1,6 @@
 // use crate::box_utils::generate_state;
+use crate::utils;
 use serde::{Deserialize, Serialize};
-
-use crate::box_utils;
 
 #[derive(Debug, Serialize, Deserialize)]
 struct AuthorizationGrant {
@@ -35,7 +34,7 @@ impl AuthorizationRequestOptional {
     pub fn new(redirect_uri: Option<String>, state: Option<String>, scope: Option<String>) -> Self {
         let local_state = match state {
             Some(state) => Some(state),
-            None => Some(box_utils::generate_state(16)),
+            None => Some(utils::generate_state::generate_state(16)),
         };
 
         let local_redirect_uri = match redirect_uri {
@@ -63,7 +62,7 @@ impl AuthorizationRequest {
         Self { client_id, options }
     }
     pub fn get_authorizarion_url(self) -> String {
-        let local_options = self.options.unwrap();
+        let local_options = self.options.expect("Unable to unwrap options");
 
         let mut url = "https://api.box.com/oauth2/authorize".to_string();
         url.push_str("?client_id=");
@@ -73,17 +72,21 @@ impl AuthorizationRequest {
 
         if local_options.redirect_uri.is_some() {
             url.push_str("&redirect_uri=");
-            url.push_str(&local_options.redirect_uri.unwrap());
+            url.push_str(
+                &local_options
+                    .redirect_uri
+                    .expect("Unable to unwrap redirect_uri"),
+            );
         }
 
         if local_options.state.is_some() {
             url.push_str("&state=");
-            url.push_str(&local_options.state.unwrap());
+            url.push_str(&local_options.state.expect("Unable to unwrap state"));
         }
 
         if local_options.scope.is_some() {
             url.push_str("&scope=");
-            url.push_str(&local_options.scope.unwrap());
+            url.push_str(&local_options.scope.expect("Unable to unwrap scope"));
         }
 
         url
@@ -150,7 +153,9 @@ mod tests {
         };
         assert_eq!(client_id, authorization_request.client_id);
         assert!(authorization_request.options.is_some());
-        let local_auth_request_options = authorization_request.options.unwrap();
+        let local_auth_request_options = authorization_request
+            .options
+            .expect("Unable to unwrap options");
         assert_eq!(
             local_redirect_uri_enc,
             local_auth_request_options.redirect_uri

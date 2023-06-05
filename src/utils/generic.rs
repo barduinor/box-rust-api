@@ -1,6 +1,7 @@
 // function to generate random state
 use rand::distributions::Alphanumeric;
 use rand::Rng;
+
 pub fn generate_state(length: u8) -> String {
     rand::thread_rng()
         .sample_iter(&Alphanumeric)
