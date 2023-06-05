@@ -26,7 +26,8 @@ struct UrlParams {
     #[serde(skip_serializing_if = "Option::is_none")]
     code: Option<String>,
 
-    state: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    state: Option<String>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
     error: Option<String>,
@@ -59,6 +60,7 @@ async fn main() {
     let params = GetAuthorizeParams {
         client_id: client_id.clone(),
         redirect_uri: Some(redirect_uri),
+        // state: Some(box_utils::generate_state(16)),
         // state: Some("STATE_STATE".to_string()),
         // scope: Some("root_readwrite".to_string()),
         ..Default::default()
@@ -107,27 +109,30 @@ async fn main() {
             let query_params: UrlParams = match serde_qs::from_str(url.query().unwrap()) {
                 Ok(query_params) => query_params,
                 Err(e) => {
-                    println!("error: {}", e);
+                    println!("Error serializing URLParams: {}", e);
                     exit(1)
                 }
             };
 
             if query_params.error.is_some() {
-                let response = Response::empty(200);
-                match rq.respond(response) {
-                    Ok(_) => (),
-                    Err(e) => {
-                        println!("error: {}", e);
-                        exit(1)
-                    }
-                };
-                println!("error: {}", query_params.error_description.unwrap());
+                let response = Response::empty(403);
+                rq.respond(response)
+                    .expect("Error sending response local server");
+
+                println!(
+                    "Authorization error: {}",
+                    query_params.error_description.unwrap()
+                );
                 exit(1)
             }
+
+            let response = Response::empty(200);
+            rq.respond(response)
+                .expect("Error sending response local server");
             query_params
         }
         Err(e) => {
-            println!("error: {}", e);
+            println!("Authorization request error: {}", e);
             exit(1)
         }
     };
@@ -136,7 +141,7 @@ async fn main() {
 
     let params = PostOauth2TokenParams {
         grant_type: "authorization_code".to_string(),
-        code: Some(query_parmas.code.unwrap()),
+        code: query_parmas.code,
         client_id: Some(client_id),
         client_secret: Some(client_secret),
 
