@@ -4,11 +4,11 @@ path = "src/lib.rs"
 
 [[bin]]
 name = "users_main"
-path = "src/users_main.rs"
+path = "examples/users_main.rs"
 
 [[bin]]
 name = "folders_main"
-path = "src/folders_main.rs"
+path = "examples/folders_main.rs"
 
 [[bin]]
 name = "files_main"
