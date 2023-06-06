@@ -1,8 +1,6 @@
 // use cargo run --bin users_main to run this file
 // use dotenv;
 
-use openapi::apis::configuration::Configuration;
-use openapi::apis::users_api;
 use std::env;
 use box_rust_sdk::authorization::DeveloperTokenAuthorizaton;
 use box_rust_sdk::box_api_client::BoxApiClient;

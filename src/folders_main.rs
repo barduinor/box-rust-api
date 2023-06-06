@@ -4,43 +4,21 @@
 use openapi::apis::configuration::Configuration;
 use openapi::apis::folders_api;
 use std::env;
+use box_rust_sdk::authorization::DeveloperTokenAuthorizaton;
+use box_rust_sdk::box_api_client::BoxApiClient;
+use box_rust_sdk::managers::folders;
 
 #[tokio::main]
 async fn main() {
     dotenv::dotenv().expect("Failed to read .env file");
 
     let developer_token = env::var("DEVELOPER_TOKEN").expect("DEVELOPER_TOKEN not set");
+    let auth = DeveloperTokenAuthorizaton::new(developer_token);
+    let api = BoxApiClient::new(auth);
 
-    let config = Configuration {
-        oauth_access_token: Some(developer_token),
-        // TODO: Bearer token is being ignored, consider fixing
-        // config.bearer_access_token = Some(developer_token);
-        ..Default::default()
-    };
-    // println!("Configuration:\n{:?}\n", config);
+    let items = folders::items(&api, &String::from("0")).await;
 
-    // Get folder information
-    let params = openapi::apis::folders_api::GetFoldersIdParams {
-        folder_id: "0".to_string(),
-        // folder_id: "209408240392".to_string(),
-        // fields: Some(vec!["id".to_owned(), "name".to_owned(), "tags".to_owned()]),
-        ..Default::default()
-    };
-
-    let folder_info = folders_api::get_folders_id(&config, params).await;
-    println!("\nFolder Info:\n{:?}\n", folder_info);
-
-    // List items in folder
-    let params = openapi::apis::folders_api::GetFoldersIdItemsParams {
-        folder_id: "0".to_string(),
-        // folder_id: "209408240392".to_string(),
-        ..Default::default()
-    };
-
-    let items = folders_api::get_folders_id_items(&config, params).await;
-    // println!("Items:\n{:?}\n", items);
-
-    for item in items.unwrap().entries.unwrap() {
-        println!("\nItem: {:?}", item);
+    for item in items.entries.unwrap() {
+        println!("\nItem: type {:?} name: {}", item.item_type, item.name.unwrap());
     }
 }
