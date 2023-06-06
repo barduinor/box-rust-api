@@ -1,6 +1,7 @@
 use std::str::FromStr;
 
-use reqwest::{Client, StatusCode, Url};
+use reqwest::{Client, Response, Error, StatusCode, Url};
+use serde::Serialize;
 
 use crate::authorization::Authorization;
 
@@ -19,14 +20,40 @@ impl BoxApiClient {
         }
     }
 
-    pub async fn get(&self, path: &str) -> String {
-        let url = Url::from_str(self.base_api_url.as_str()).unwrap().join(path).unwrap();
-        let result = self.client.get(url.as_str())
+    pub async fn get(&self, path: &str) -> Option<String> {
+        let url = self.url(path);
+        let result = self.client.get(url.clone())
             .header("Authorization", self.authorization.bearer_token().await)
             .send()
             .await;
+        self.response_to_string(result, &url).await
+    }
 
-        let result = match result {
+    pub async fn post(&self, path: &str, body: &impl Serialize) -> String {
+        let url = self.url(path);
+        let result = self.client.post(url.clone())
+            .json(body)
+            .header("Authorization", self.authorization.bearer_token().await)
+            .send()
+            .await;
+        self.response_to_string(result, &url).await.unwrap()
+    }
+
+    pub async fn delete(&self, path: &str) -> () {
+        let url = self.url(path);
+        let response = self.client.delete(url.clone())
+            .header("Authorization", self.authorization.bearer_token().await)
+            .send()
+            .await;
+        self.response_to_string(response, &url).await;
+    }
+
+    fn url(&self, path: &str) -> Url{
+        Url::from_str(self.base_api_url.as_str()).unwrap().join(path).unwrap()
+    }
+
+    async fn response_to_string(&self, response: Result<Response, Error>, url: &Url) -> Option<String> {
+        let result = match response {
             Ok(r) => { r }
             Err(err) => {
                 panic!("Request failed with {}", err)
@@ -35,10 +62,19 @@ impl BoxApiClient {
 
         match result.status() {
             StatusCode::OK => {
-                result.text().await.unwrap()
+                Some(result.text().await.unwrap())
+            }
+            StatusCode::CREATED => {
+                Some(result.text().await.unwrap())
+            }
+            StatusCode::NO_CONTENT => {
+                None
             }
             StatusCode::UNAUTHORIZED => {
                 panic!("Not authorized")
+            }
+            StatusCode::NOT_FOUND => {
+                None
             }
             _ => {
                 let error_code = result.status();

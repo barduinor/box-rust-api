@@ -10,6 +10,7 @@
 
 
 use serde::{Deserialize, Serialize};
+use crate::models::ItemType;
 
 #[derive(Clone, Debug, PartialEq, Default, Serialize, Deserialize)]
 pub struct ItemsAllOfEntriesInner {
@@ -52,20 +53,5 @@ impl ItemsAllOfEntriesInner {
     }
 }
 
-/// `web_link`
-#[derive(Clone, Copy, Debug, Eq, PartialEq, Ord, PartialOrd, Hash, Serialize, Deserialize)]
-pub enum ItemType {
-    #[serde(rename = "web_link")]
-    WebLink,
-    #[serde(rename = "folder")]
-    Folder,
-    #[serde(rename = "file")]
-    File,
-}
 
-impl Default for ItemType {
-    fn default() -> ItemType {
-        Self::File
-    }
-}
 

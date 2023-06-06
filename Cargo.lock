@@ -64,6 +64,7 @@ dependencies = [
  "serde",
  "serde_json",
  "serde_qs",
+ "serde_with",
  "tiny_http",
  "tokio",
  "tokio-util",
