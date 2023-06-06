@@ -16,7 +16,7 @@ path = "examples/files_main.rs"
 
 [[bin]]
 name = "authorization_main"
-path = "src/authorization_main.rs"
+path = "examples/authorization_main.rs"
 
 [[bin]]
 name = "upload_experiment"
@@ -24,7 +24,7 @@ path = "src/upload_experiment.rs"
 
 [[bin]]
 name = "oauth_app"
-path = "src/oauth_app.rs"
+path = "examples/box_oauth_app/oauth_app.rs"
 
 [[bin]]
 name = "kamil_oauth_app"

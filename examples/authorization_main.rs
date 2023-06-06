@@ -1,7 +1,5 @@
-mod box_authentication;
-
-// use std::borrow::Borrow;
 // use cargo run --bin authorization_main to run this file
+
 use std::env;
 use std::process::exit;
 
@@ -56,8 +54,8 @@ async fn main() {
     let params = GetAuthorizeParams {
         client_id: client_id.clone(),
         redirect_uri: Some(redirect_uri),
-        state: Some(box_authentication::generic::generate_state(16)),
-        // state: Some("STATE_STATE".to_string()),
+        // state: Some(box_authentication::generic::generate_state(16)),
+        state: Some("STATE_STATE".to_string()),
         // scope: Some("root_readwrite".to_string()),
         ..Default::default()
     };
