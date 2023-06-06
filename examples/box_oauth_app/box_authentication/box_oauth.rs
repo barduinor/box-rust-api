@@ -1,15 +1,11 @@
-use std::error::Error;
-
-// use crate::box_authentication::authorization_request;
-use crate::box_authentication::authorization_request::AuthorizationGrant;
 use crate::box_authentication::authorization_request::AuthorizationRequest;
 use crate::box_authentication::authorization_request::AuthorizationRequestOptional;
 use openapi::apis::authorization_api::post_oauth2_token;
-use openapi::apis::authorization_api::PostOauth2TokenError;
+
 use openapi::apis::authorization_api::PostOauth2TokenParams;
-use openapi::models::file_all_of_shared_link::Access;
+
 use openapi::models::AccessToken;
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Deserialize, Serialize, Default, Clone)]
 pub struct OAuth2 {
@@ -19,6 +15,7 @@ pub struct OAuth2 {
 }
 
 impl OAuth2 {
+    #[allow(dead_code)]
     pub fn new(client_id: String, client_secret: String) -> Self {
         Self {
             client_id,
@@ -26,7 +23,7 @@ impl OAuth2 {
             access_token: String::new(),
         }
     }
-
+    #[allow(dead_code)]
     pub fn access_token(&self) -> String {
         self.access_token.clone()
     }

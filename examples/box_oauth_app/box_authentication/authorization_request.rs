@@ -36,10 +36,8 @@ impl AuthorizationRequestOptional {
             None => Some("box_csrf_token_".to_string() + &generic::generate_state(16)),
         };
 
-        let local_redirect_uri = match redirect_uri {
-            Some(redirect_uri) => Some(urlencoding::encode(&redirect_uri).to_string()),
-            None => None,
-        };
+        let local_redirect_uri =
+            redirect_uri.map(|redirect_uri| urlencoding::encode(&redirect_uri).to_string());
 
         Self {
             redirect_uri: local_redirect_uri,
@@ -57,6 +55,7 @@ pub struct AuthorizationRequest {
     pub options: Option<AuthorizationRequestOptional>,
 }
 impl AuthorizationRequest {
+    #[allow(dead_code)]
     pub fn new(client_id: String, options: Option<AuthorizationRequestOptional>) -> Self {
         Self { client_id, options }
     }

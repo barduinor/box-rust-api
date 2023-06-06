@@ -1,11 +1,9 @@
-use box_rust_sdk::managers;
-
 #[cfg(test)]
 mod users_tests {
-    use std::env;
     use box_rust_sdk::authorization::DeveloperTokenAuthorizaton;
     use box_rust_sdk::box_api_client::BoxApiClient;
     use box_rust_sdk::managers;
+    use std::env;
 
     #[tokio::test]
     async fn me_works() {
@@ -16,6 +14,6 @@ mod users_tests {
 
         let me = managers::users::me(&client).await;
 
-        assert_eq!(me.login.is_some(), true, "Missing user login");
+        assert!(me.login.is_some(), "Missing user login");
     }
 }

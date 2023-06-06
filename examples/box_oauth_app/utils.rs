@@ -11,6 +11,7 @@ pub fn save_access_token(access_token: AccessToken) {
     fs::write(".access_token.json", data).expect("Unable to save access token");
 }
 
+#[allow(dead_code)]
 pub fn read_access_token() -> Result<AccessToken, Box<dyn Error>> {
     let file = File::open(".access_token.json")?;
     let reader = BufReader::new(file);

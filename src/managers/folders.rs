@@ -1,16 +1,18 @@
-use std::fmt::format;
+use reqwest::{multipart, Body};
+use serde::{Deserialize, Serialize};
 use std::fs::File;
 use std::io::Error;
-use reqwest::{Body, multipart};
-use serde::{Deserialize, Serialize};
-use tokio_util::codec::{BytesCodec, FramedRead};
 use tokio::fs::File as TokioFile;
+use tokio_util::codec::{BytesCodec, FramedRead};
 
 use crate::box_api_client::BoxApiClient;
 use crate::models::{FolderAllOfItemCollection, FolderFull};
 
 pub async fn items(api: &BoxApiClient, folder_id: &String) -> FolderAllOfItemCollection {
-    let response_string = api.get(format!("folders/{}/items", folder_id).as_str()).await.unwrap();
+    let response_string = api
+        .get(format!("folders/{}/items", folder_id).as_str())
+        .await
+        .unwrap();
     serde_json::from_str(&response_string).unwrap()
 }
 
@@ -19,7 +21,7 @@ pub async fn create(api: &BoxApiClient, request: &CreateFolderRequest) -> Folder
     serde_json::from_str(&response).unwrap()
 }
 
-pub async fn delete(api: &BoxApiClient, folder_id: &String, recursive: bool) -> () {
+pub async fn delete(api: &BoxApiClient, folder_id: &String, recursive: bool) {
     let mut url = format!("folders/{}", folder_id);
     if recursive {
         url = format!("folders/{}?recursive=true", folder_id);
@@ -32,11 +34,15 @@ pub async fn get(api: &BoxApiClient, folder_id: &String) -> Option<FolderFull> {
     let response = api.get(format!("folders/{}", folder_id).as_str()).await;
     match response {
         None => None,
-        Some(folder_string) => serde_json::from_str(&folder_string).unwrap()
+        Some(folder_string) => serde_json::from_str(&folder_string).unwrap(),
     }
 }
 
-pub async fn upload_file(api: &BoxApiClient, file: File, attributes: &FileUploadAttributes) -> Option<String> {
+pub async fn upload_file(
+    api: &BoxApiClient,
+    file: File,
+    attributes: &FileUploadAttributes,
+) -> Option<String> {
     // // read file body stream
     let stream = FramedRead::new(TokioFile::from(file), BytesCodec::new());
     let file_body = Body::wrap_stream(stream);
@@ -44,7 +50,8 @@ pub async fn upload_file(api: &BoxApiClient, file: File, attributes: &FileUpload
     // // make form part of file
     let some_file = multipart::Part::stream(file_body)
         .file_name("image.jpeg")
-        .mime_str("application/octet-stream").ok()?;
+        .mime_str("application/octet-stream")
+        .ok()?;
 
     // create the multipart form
     let form = multipart::Form::new()
@@ -55,14 +62,19 @@ pub async fn upload_file(api: &BoxApiClient, file: File, attributes: &FileUpload
     api.multipart(form).await
 }
 
-pub async fn download_file(api: &BoxApiClient, file_id: &String, destination: &mut File) -> Result<(), Error> {
-    match api.get_binary(&format!("files/{}/content", file_id), destination).await {
-        Ok(_) => {}
-        Err(_) => {}
-    };
+pub async fn download_file(
+    api: &BoxApiClient,
+    file_id: &String,
+    destination: &mut File,
+) -> Result<(), Error> {
+    if (api
+        .get_binary(&format!("files/{}/content", file_id), destination)
+        .await)
+        .is_ok()
+    {}
+
     Ok(())
 }
-
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq, Ord, PartialOrd, Hash, Serialize, Deserialize)]
 pub enum ItemType {
@@ -96,7 +108,7 @@ impl CreateFolderRequest {
         Self {
             name,
             parent: Parent {
-                id: parent_folder_id
+                id: parent_folder_id,
             },
         }
     }
@@ -109,11 +121,11 @@ pub struct FileUploadAttributes {
 }
 
 impl FileUploadAttributes {
-    pub fn new(name: String, parent_folder_id: &String) -> Self {
+    pub fn new(name: String, parent_folder_id: &str) -> Self {
         Self {
             name,
             parent: Parent {
-                id: parent_folder_id.clone()
+                id: parent_folder_id.to_owned(),
             },
         }
     }
