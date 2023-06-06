@@ -26,6 +26,10 @@ path = "src/upload_experiment.rs"
 name = "oauth_app"
 path = "src/oauth_app.rs"
 
+[[bin]]
+name = "kamil_oauth_app"
+path = "src/kamil_oauth_main.rs"
+
 [package]
 name = "box-rust-api-example"
 version = "0.1.0"
