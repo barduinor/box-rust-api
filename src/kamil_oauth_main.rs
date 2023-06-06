@@ -25,7 +25,7 @@ async fn main() -> Result<(), ()> {
     let auth = OAuthAuthorizaton::new(&client_id, &client_secret, &oauth);
     let api = BoxApiClient::new(auth);
     let response = users::me(&api).await;
-    println!("{:?}", &response.unwrap());
+    println!("{:?}", &response);
 
     Ok(())
 }
