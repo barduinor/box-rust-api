@@ -9,7 +9,7 @@ use openapi::apis::authorization_api::PostOauth2TokenError;
 use openapi::apis::authorization_api::PostOauth2TokenParams;
 use openapi::models::file_all_of_shared_link::Access;
 use openapi::models::AccessToken;
-use serde_derive::{Deserialize, Serialize};
+use serde::{Serialize, Deserialize};
 
 #[derive(Debug, Deserialize, Serialize, Default, Clone)]
 pub struct OAuth2 {
