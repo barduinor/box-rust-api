@@ -77,7 +77,9 @@ mod folders_tests {
         let file_id = vec.get(0).unwrap().clone().id;
 
         let mut file = StdFile::create("download_test.jpeg").unwrap();
-        folders::download_file(api, &file_id, &mut file).await;
+        folders::download_file(api, &file_id, &mut file)
+            .await
+            .unwrap();
 
         let folder_id = &folder.id;
         folders::delete(api, folder_id, true).await;
