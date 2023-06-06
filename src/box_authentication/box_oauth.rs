@@ -11,10 +11,11 @@ use openapi::models::file_all_of_shared_link::Access;
 use openapi::models::AccessToken;
 use serde_derive::{Deserialize, Serialize};
 
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Debug, Deserialize, Serialize, Default, Clone)]
 pub struct OAuth2 {
     pub client_id: String,
     pub client_secret: String,
+    pub access_token: String,
 }
 
 impl OAuth2 {
@@ -22,7 +23,12 @@ impl OAuth2 {
         Self {
             client_id,
             client_secret,
+            access_token: String::new(),
         }
+    }
+
+    pub fn access_token(&self) -> String {
+        self.access_token.clone()
     }
 
     pub fn get_authorization_url(&self, redirect_uri: String) -> (String, String) {
@@ -41,7 +47,7 @@ impl OAuth2 {
         (authorization_request.get_authorizarion_url(), state)
     }
 
-    pub async fn authenticate(&self, code: String) -> AccessToken {
+    pub async fn authenticate(mut self, code: String) -> AccessToken {
         // let config = openapi::apis::configuration::Configuration::default();
 
         let config = openapi::apis::configuration::Configuration {
@@ -57,7 +63,17 @@ impl OAuth2 {
 
             ..Default::default()
         };
-        let access_token = post_oauth2_token(&config, params).await;
-        access_token.expect("Unable to get access token")
+        let access_token = match post_oauth2_token(&config, params).await {
+            Ok(access_token) => access_token,
+            Err(e) => {
+                println!("Error: {:?}", e);
+                AccessToken::default()
+            }
+        };
+        self.access_token = access_token
+            .clone()
+            .access_token
+            .expect("Error unwrapping access token");
+        access_token
     }
 }

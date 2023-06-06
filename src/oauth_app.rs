@@ -27,6 +27,7 @@ async fn main() {
     let oauth = box_authentication::box_oauth::OAuth2 {
         client_id,
         client_secret,
+        ..Default::default()
     };
     println!("\n{:?}\n", oauth);
 
@@ -77,4 +78,6 @@ async fn main() {
     println!("Tokens:\n{:?}\n", tokens);
 
     save_access_token(tokens);
+
+    // println!("Oauth access token: {:?}\n", oauth.access_token());
 }
