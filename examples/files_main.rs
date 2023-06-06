@@ -31,7 +31,7 @@ async fn main() {
     let mut file_id = "".to_string();
     for item in items.unwrap().entries.unwrap() {
         if item.r#type == File {
-            println!("\nFound a file: {:?}", item);
+            // println!("\nFound a file:\n {item:#?}");
             file_id = item.id;
             break;
         }
@@ -45,5 +45,5 @@ async fn main() {
 
     let file_info = files_api::get_files_id(&config, params).await;
 
-    println!("File info:\n{:?}\n", file_info);
+    println!("File info:\n{file_info:#?}\n");
 }

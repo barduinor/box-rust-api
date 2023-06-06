@@ -12,7 +12,7 @@ path = "examples/folders_main.rs"
 
 [[bin]]
 name = "files_main"
-path = "src/files_main.rs"
+path = "examples/files_main.rs"
 
 [[bin]]
 name = "authorization_main"
