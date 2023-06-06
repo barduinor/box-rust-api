@@ -61,11 +61,6 @@ pub async fn download_file(api: &BoxApiClient, file_id: &String, destination: &m
         Err(_) => {}
     };
     Ok(())
-    // let mut cursor = api.get_binary(&format!("files/{}/content", file_id)).await;
-    // match std::io::copy(&mut cursor, destination) {
-    //     Ok(_) => Ok(()),
-    //     Err(err) => Err(err)
-    // }
 }
 
 
