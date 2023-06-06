@@ -1,6 +1,7 @@
 use std::str::FromStr;
 
 use reqwest::{Client, Response, Error, StatusCode, Url};
+use reqwest::multipart::Form;
 use serde::Serialize;
 
 use crate::authorization::Authorization;
@@ -46,6 +47,16 @@ impl BoxApiClient {
             .send()
             .await;
         self.response_to_string(response, &url).await;
+    }
+
+    pub async fn multipart(&self, form: Form) -> Option<String> {
+        let url = self.url("https://upload.box.com/api/2.0/files/content");
+        let response = self.client.post(url.clone())
+            .header("Authorization", self.authorization.bearer_token().await)
+            .multipart(form)
+            .send()
+            .await;
+        self.response_to_string(response, &url).await
     }
 
     fn url(&self, path: &str) -> Url{

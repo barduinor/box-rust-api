@@ -5,8 +5,9 @@ mod folders_tests {
     use box_rust_sdk::authorization::DeveloperTokenAuthorizaton;
     use box_rust_sdk::box_api_client::BoxApiClient;
     use box_rust_sdk::managers::folders;
-    use box_rust_sdk::managers::folders::CreateFolderRequest;
+    use box_rust_sdk::managers::folders::{CreateFolderRequest, FileUploadAttributes};
     use box_rust_sdk::models::ItemType::{File, Folder, WebLink};
+    use tokio::fs::File as BinaryFile;
 
     #[tokio::test]
     async fn folder_items_works() {
@@ -27,7 +28,26 @@ mod folders_tests {
         assert_eq!(folder.is_some(), true, "Folder was not created");
 
         let folder_id = &folder.unwrap().id;
-        folders::delete(api, folder_id).await;
+        folders::delete(api, folder_id, false).await;
+        let folder = folders::get(api, folder_id).await;
+        assert_eq!(folder.is_none(), true, "Folder was not removed");
+    }
+
+    #[tokio::test]
+    async fn upload_to_new_folder_works() {
+        let body = CreateFolderRequest::new("Test Upload".to_string(), String::from("0"));
+
+        let api = &prepare_client();
+        let folder = folders::create(api, &body).await;
+
+        let file = BinaryFile::open("resources/porg.jpeg").await.unwrap();
+        let attrs = FileUploadAttributes::new(String::from("image.jpg"), &folder.id);
+
+        let result = folders::upload_file(&api, file, &attrs).await.unwrap();
+        println!("File uploaded {:?}", &result);
+
+        let folder_id = &folder.id;
+        folders::delete(api, folder_id, true).await;
         let folder = folders::get(api, folder_id).await;
         assert_eq!(folder.is_none(), true, "Folder was not removed");
     }
