@@ -1,4 +1,4 @@
-// use cargo run --bin files_main to run this file
+// use cargo run --example files_main to run this file
 // use dotenv;
 
 use openapi::apis::configuration::Configuration;

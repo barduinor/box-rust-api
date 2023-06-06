@@ -2,21 +2,21 @@
 name = "box_rust_sdk"
 path = "src/lib.rs"
 
-[[bin]]
-name = "users_main"
-path = "examples/users_main.rs"
+# [[bin]]
+# name = "users_main"
+# path = "examples/users_main.rs"
 
-[[bin]]
-name = "folders_main"
-path = "examples/folders_main.rs"
+# [[bin]]
+# name = "folders_main"
+# path = "examples/folders_main.rs"
 
-[[bin]]
-name = "files_main"
-path = "examples/files_main.rs"
+# [[bin]]
+# name = "files_main"
+# path = "examples/files_main.rs"
 
-[[bin]]
-name = "authorization_main"
-path = "examples/authorization_main.rs"
+# [[bin]]
+# name = "authorization_main"
+# path = "examples/authorization_main.rs"
 
 [[bin]]
 name = "upload_experiment"

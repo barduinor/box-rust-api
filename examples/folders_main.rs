@@ -1,4 +1,4 @@
-// use cargo run --bin folders_main to run this file
+// use cargo run --example folders_main to run this file
 // use dotenv;
 
 use box_rust_sdk::authorization::DeveloperTokenAuthorizaton;

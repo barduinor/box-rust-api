@@ -1,4 +1,4 @@
-// use cargo run --bin authorization_main to run this file
+// use cargo run --example authorization_main to run this file
 
 use std::env;
 use std::process::exit;
