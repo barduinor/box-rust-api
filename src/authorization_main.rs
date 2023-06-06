@@ -1,4 +1,4 @@
-mod utils;
+mod box_authentication;
 
 // use std::borrow::Borrow;
 // use cargo run --bin authorization_main to run this file
@@ -56,7 +56,7 @@ async fn main() {
     let params = GetAuthorizeParams {
         client_id: client_id.clone(),
         redirect_uri: Some(redirect_uri),
-        state: Some(utils::generic::generate_state(16)),
+        state: Some(box_authentication::generic::generate_state(16)),
         // state: Some("STATE_STATE".to_string()),
         // scope: Some("root_readwrite".to_string()),
         ..Default::default()
@@ -101,6 +101,8 @@ async fn main() {
                     exit(1)
                 }
             };
+
+            // let abc: UrlParams = serde_qs::from_str(url.query().unwrap());
 
             let query_params: UrlParams = match serde_qs::from_str(url.query().unwrap()) {
                 Ok(query_params) => query_params,

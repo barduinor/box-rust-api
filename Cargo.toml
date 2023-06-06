@@ -18,6 +18,10 @@ path = "src/authorization_main.rs"
 name = "upload_experiment"
 path = "src/upload_experiment.rs"
 
+[[bin]]
+name = "oauth_app"
+path = "src/oauth_app.rs"
+
 [package]
 name = "box-rust-api-example"
 version = "0.1.0"

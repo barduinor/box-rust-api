@@ -1,7 +1,8 @@
+use super::generic;
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Serialize, Deserialize)]
-struct AuthorizationGrant {
+#[derive(Debug, Serialize, Deserialize, Clone)]
+pub struct AuthorizationGrant {
     #[serde(skip_serializing_if = "Option::is_none")]
     code: Option<String>,
 
@@ -14,15 +15,15 @@ struct AuthorizationGrant {
     error_description: Option<String>,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
-struct AuthorizationRequestOptional {
+#[derive(Debug, Serialize, Deserialize, Clone)]
+pub struct AuthorizationRequestOptional {
     #[serde(skip_serializing_if = "Option::is_none")]
     redirect_uri: Option<String>,
 
     // #[serde(skip_serializing_if = "Option::is_none")]
     // redirect_uri_enc: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    state: Option<String>,
+    pub state: Option<String>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
     scope: Option<String>,
@@ -32,7 +33,7 @@ impl AuthorizationRequestOptional {
     pub fn new(redirect_uri: Option<String>, state: Option<String>, scope: Option<String>) -> Self {
         let local_state = match state {
             Some(state) => Some(state),
-            None => Some(utils::generate_state::generate_state(16)),
+            None => Some("box_csrf_token_".to_string() + &generic::generate_state(16)),
         };
 
         let local_redirect_uri = match redirect_uri {
@@ -49,11 +50,11 @@ impl AuthorizationRequestOptional {
 }
 
 #[derive(Debug, Serialize, Deserialize)]
-struct AuthorizationRequest {
-    client_id: String,
+pub struct AuthorizationRequest {
+    pub client_id: String,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    options: Option<AuthorizationRequestOptional>,
+    pub options: Option<AuthorizationRequestOptional>,
 }
 impl AuthorizationRequest {
     pub fn new(client_id: String, options: Option<AuthorizationRequestOptional>) -> Self {
