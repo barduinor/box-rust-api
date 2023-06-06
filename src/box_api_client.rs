@@ -1,6 +1,8 @@
-use std::str::FromStr;
+use std::fs::File;
+use std::io::{Cursor, Read};
+use std::str::{Bytes, FromStr};
 
-use reqwest::{Client, Response, Error, StatusCode, Url};
+use reqwest::{Client, Error, Response, StatusCode, Url};
 use reqwest::multipart::Form;
 use serde::Serialize;
 
@@ -59,7 +61,30 @@ impl BoxApiClient {
         self.response_to_string(response, &url).await
     }
 
-    fn url(&self, path: &str) -> Url{
+    pub async fn get_binary(&self, path: &str, file: &mut File) -> Result<(), ()> {
+        let url = self.url(path);
+        let response = self.client.get(url.clone())
+            .header("Authorization", self.authorization.bearer_token().await)
+            .send()
+            .await;
+
+        let result_with_bytes = match response {
+            Ok(r) => r.bytes(),
+            Err(err) => panic!("{}", err)
+        }.await;
+
+        let mut cursor = match result_with_bytes {
+            Ok(b) => Cursor::new(b),
+            Err(err) => panic!("{}", err)
+        };
+
+        match std::io::copy(&mut cursor, file) {
+            Ok(_) => Ok(()),
+            Err(err) => panic!("{}", err)
+        }
+    }
+
+    fn url(&self, path: &str) -> Url {
         Url::from_str(self.base_api_url.as_str()).unwrap().join(path).unwrap()
     }
 
