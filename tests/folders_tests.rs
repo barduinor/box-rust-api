@@ -1,13 +1,17 @@
 #[cfg(test)]
 mod folders_tests {
     use std::env;
+
+    use openapi::models::Items;
     use serde::de::Unexpected::Str;
+    use std::fs::File as StdFile;
+
     use box_rust_sdk::authorization::DeveloperTokenAuthorizaton;
     use box_rust_sdk::box_api_client::BoxApiClient;
     use box_rust_sdk::managers::folders;
     use box_rust_sdk::managers::folders::{CreateFolderRequest, FileUploadAttributes};
+    use box_rust_sdk::models::FileMiniAllOfFileVersion;
     use box_rust_sdk::models::ItemType::{File, Folder, WebLink};
-    use tokio::fs::File as BinaryFile;
 
     #[tokio::test]
     async fn folder_items_works() {
@@ -40,11 +44,38 @@ mod folders_tests {
         let api = &prepare_client();
         let folder = folders::create(api, &body).await;
 
-        let file = BinaryFile::open("resources/porg.jpeg").await.unwrap();
+        let file = StdFile::open("resources/porg.jpeg").unwrap();
         let attrs = FileUploadAttributes::new(String::from("image.jpg"), &folder.id);
 
         let result = folders::upload_file(&api, file, &attrs).await.unwrap();
         println!("File uploaded {:?}", &result);
+
+        let folder_id = &folder.id;
+        folders::delete(api, folder_id, true).await;
+        let folder = folders::get(api, folder_id).await;
+        assert_eq!(folder.is_none(), true, "Folder was not removed");
+    }
+
+
+    #[tokio::test]
+    async fn download_works() {
+        let body = CreateFolderRequest::new("Test Upload".to_string(), String::from("0"));
+
+        let api = &prepare_client();
+        let folder = folders::create(api, &body).await;
+
+        let file = StdFile::open("resources/porg.jpeg").unwrap();
+        let attrs = FileUploadAttributes::new(String::from("image.jpg"), &folder.id);
+
+        let result = folders::upload_file(&api, file, &attrs).await.unwrap();
+        println!("File uploaded {:?}", &result);
+        //TODO: move this to upload_file
+        let files: Items = serde_json::from_str(&result).unwrap();
+        let vec = files.entries.unwrap();
+        let file_id = vec.get(0).unwrap().clone().id;
+
+        let mut file = StdFile::create("download_test.jpeg").unwrap();
+        folders::download_file(&api, &file_id, &mut file).await;
 
         let folder_id = &folder.id;
         folders::delete(api, folder_id, true).await;

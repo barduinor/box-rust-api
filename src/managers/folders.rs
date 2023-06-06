@@ -1,8 +1,10 @@
-
+use std::fmt::format;
+use std::fs::File;
+use std::io::Error;
 use reqwest::{Body, multipart};
 use serde::{Deserialize, Serialize};
 use tokio_util::codec::{BytesCodec, FramedRead};
-use tokio::fs::File;
+use tokio::fs::File as TokioFile;
 
 use crate::box_api_client::BoxApiClient;
 use crate::models::{FolderAllOfItemCollection, FolderFull};
@@ -36,7 +38,7 @@ pub async fn get(api: &BoxApiClient, folder_id: &String) -> Option<FolderFull> {
 
 pub async fn upload_file(api: &BoxApiClient, file: File, attributes: &FileUploadAttributes) -> Option<String> {
     // // read file body stream
-    let stream = FramedRead::new(file, BytesCodec::new());
+    let stream = FramedRead::new(TokioFile::from(file), BytesCodec::new());
     let file_body = Body::wrap_stream(stream);
 
     // // make form part of file
@@ -51,6 +53,19 @@ pub async fn upload_file(api: &BoxApiClient, file: File, attributes: &FileUpload
 
     // send request
     api.multipart(form).await
+}
+
+pub async fn download_file(api: &BoxApiClient, file_id: &String, destination: &mut File) -> Result<(), Error> {
+    match api.get_binary(&format!("files/{}/content", file_id), destination).await {
+        Ok(_) => {}
+        Err(_) => {}
+    };
+    Ok(())
+    // let mut cursor = api.get_binary(&format!("files/{}/content", file_id)).await;
+    // match std::io::copy(&mut cursor, destination) {
+    //     Ok(_) => Ok(()),
+    //     Err(err) => Err(err)
+    // }
 }
 
 
