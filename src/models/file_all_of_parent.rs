@@ -11,7 +11,7 @@
 use serde::{Deserialize, Serialize};
 
 #[derive(Clone, Debug, PartialEq, Default, Serialize, Deserialize)]
-pub struct FolderAllOfParent {
+pub struct FileAllOfParent {
     /// The unique identifier that represent a folder.  The ID for any folder can be determined by visiting a folder in the web application and copying the ID from the URL. For example, for the URL `https://_*.app.box.com/folders/123` the `folder_id` is `123`.
     #[serde(rename = "id")]
     pub id: String,
@@ -39,9 +39,9 @@ pub struct FolderAllOfParent {
     pub sequence_id: Option<Option<String>>,
 }
 
-impl FolderAllOfParent {
-    pub fn new(id: String, r#type: RHashType) -> FolderAllOfParent {
-        FolderAllOfParent {
+impl FileAllOfParent {
+    pub fn new(id: String, r#type: RHashType) -> FileAllOfParent {
+        FileAllOfParent {
             id,
             etag: None,
             r#type,

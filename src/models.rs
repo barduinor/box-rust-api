@@ -1,6 +1,8 @@
 pub use self::collaborations_all_of_order::CollaborationsAllOfOrder;
 pub use self::collaborations_all_of_order::Direction;
+pub use self::file::File;
 pub use self::file_mini_all_of_file_version::FileMiniAllOfFileVersion;
+pub use self::files::Files;
 pub use self::folder_all_of_created_by::FolderAllOfCreatedBy;
 pub use self::folder_all_of_folder_upload_email::FolderAllOfFolderUploadEmail;
 pub use self::folder_all_of_item_collection::FolderAllOfItemCollection;
@@ -21,8 +23,23 @@ pub use self::tracking_code::TrackingCode;
 pub use self::user_full::UserFull;
 pub use self::user_full_all_of_enterprise::UserFullAllOfEnterprise;
 
+pub mod file_all_of_created_by;
+pub use self::file_all_of_created_by::FileAllOfCreatedBy;
+pub mod file_all_of_modified_by;
+pub use self::file_all_of_modified_by::FileAllOfModifiedBy;
+pub mod file_all_of_owned_by;
+pub use self::file_all_of_owned_by::FileAllOfOwnedBy;
+pub mod file_all_of_parent;
+pub use self::file_all_of_parent::FileAllOfParent;
+pub mod file_all_of_path_collection;
+pub use self::file_all_of_path_collection::FileAllOfPathCollection;
+pub mod file_all_of_shared_link;
+pub use self::file_all_of_shared_link::FileAllOfSharedLink;
+
 mod collaborations_all_of_order;
+mod file;
 mod file_mini_all_of_file_version;
+mod files;
 mod folder_all_of_created_by;
 mod folder_all_of_folder_upload_email;
 mod folder_all_of_item_collection;

@@ -38,6 +38,7 @@ pub async fn get(api: &BoxApiClient, folder_id: &String) -> Option<FolderFull> {
     }
 }
 
+//TODO: This should return a file object
 pub async fn upload_file(
     api: &BoxApiClient,
     file: File,

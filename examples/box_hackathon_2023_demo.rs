@@ -62,7 +62,7 @@ async fn upload_file(api: &BoxApiClient, folder_id: &str, file_path: &str, box_f
     let attrs = folders::FileUploadAttributes::new(box_file_name.to_string(), folder_id);
 
     let result = folders::upload_file(api, file, &attrs).await.unwrap();
-    println!("File uploaded {:?}", &result);
+    // println!("File uploaded {:?}", &result);
 }
 
 #[tokio::main]
