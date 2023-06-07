@@ -11,14 +11,6 @@ use box_rust_sdk::models::File;
 use box_rust_sdk::models::FolderFull;
 use std::env;
 
-fn pause() {
-    println!("Press enter to continue...\n");
-
-    let _ = std::io::stdin()
-        .read_line(&mut String::new())
-        .expect("Failed to read line");
-}
-
 async fn get_current_user(api: &BoxApiClient) {
     let user = users::me(api).await;
 
@@ -29,7 +21,7 @@ async fn get_current_user(api: &BoxApiClient) {
         user.name.unwrap(),
         user.login.unwrap()
     );
-    pause();
+    println!();
 }
 
 async fn list_folder_by_id(api: &BoxApiClient, folder_id: &str) {
@@ -44,7 +36,7 @@ async fn list_folder_by_id(api: &BoxApiClient, folder_id: &str) {
             item.name.unwrap()
         );
     }
-    pause();
+    println!();
 }
 
 async fn create_folder(
@@ -98,8 +90,9 @@ async fn main() {
     let folder_box_hack = create_folder(&api, "Box Hackathon 2023", "0").await;
     println!("Created folder: {}", folder_box_hack.name.as_ref().unwrap());
 
-    println!("\nRefresh browser to update folder list");
-    pause();
+    // println!("\nRefresh browser to update folder list");
+    // pause();
+    list_folder_by_id(&api, "0").await;
 
     delete_folder(&api, &folder_rusty_box.id).await;
     println!("Deleted folder: {}", folder_rusty_box.name.unwrap());
@@ -107,8 +100,9 @@ async fn main() {
     delete_folder(&api, &folder_box_hack.id).await;
     println!("Deleted folder: {}", folder_box_hack.name.unwrap());
 
-    println!("\nRefresh browser to update folder list");
-    pause();
+    // println!("\nRefresh browser to update folder list");
+    // pause();
+    list_folder_by_id(&api, "0").await;
 
     println!("Uploading file Rust.png to root folder (id: 0)");
     let file_rust = upload_file(&api, "0", "./resources/Rust.png", "Rusty.png").await;
@@ -116,8 +110,9 @@ async fn main() {
     println!("Uploading file Box.png to root folder (id: 0)");
     let file_box = upload_file(&api, "0", "./resources/Box.png", "Box.png").await;
 
-    println!("\nRefresh browser to update folder list");
-    pause();
+    // println!("\nRefresh browser to update folder list");
+    // pause();
+    list_folder_by_id(&api, "0").await;
 
     delete_file(&api, &file_rust.id).await;
     println!("Deleted file: {}", file_rust.name.unwrap());
@@ -127,4 +122,5 @@ async fn main() {
 
     // println!("\nRefresh browser to update folder list");
     // pause();
+    list_folder_by_id(&api, "0").await;
 }
