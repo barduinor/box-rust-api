@@ -2,7 +2,7 @@
 mod folders_tests {
     use std::env;
 
-    use openapi::models::Items;
+    // use openapi::models::Items;
     // use serde::de::Unexpected::Str;
     use std::fs::File as StdFile;
 
@@ -50,8 +50,8 @@ mod folders_tests {
         let file = StdFile::open("resources/porg.jpeg").unwrap();
         let attrs = FileUploadAttributes::new(String::from("image.jpg"), &folder.id);
 
-        let result = folders::upload_file(api, file, &attrs).await.unwrap();
-        println!("File uploaded {:?}", &result);
+        let file_uploaded = folders::upload_file(api, file, &attrs).await.unwrap();
+        println!("File uploaded {:#?}", &file_uploaded);
 
         let folder_id = &folder.id;
         folders::delete(api, folder_id, true).await;
@@ -69,13 +69,11 @@ mod folders_tests {
         let file = StdFile::open("resources/porg.jpeg").unwrap();
         let attrs = FileUploadAttributes::new(String::from("image.jpg"), &folder.id);
 
-        let result = folders::upload_file(api, file, &attrs).await.unwrap();
-        println!("File uploaded {:?}", &result);
+        let file = folders::upload_file(api, file, &attrs).await.unwrap();
+        println!("File uploaded {:?}", &file);
         //TODO: move this to upload_file
-        let files: Items = serde_json::from_str(&result).unwrap();
-        let vec = files.entries.unwrap();
-        let file_id = vec.get(0).unwrap().clone().id;
 
+        let file_id = file.id;
         let mut file = StdFile::create("download_test.jpeg").unwrap();
         folders::download_file(api, &file_id, &mut file)
             .await

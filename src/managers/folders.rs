@@ -6,7 +6,7 @@ use tokio::fs::File as TokioFile;
 use tokio_util::codec::{BytesCodec, FramedRead};
 
 use crate::box_api_client::BoxApiClient;
-use crate::models::{FolderAllOfItemCollection, FolderFull};
+use crate::models::{Files, FolderAllOfItemCollection, FolderFull};
 
 pub async fn items(api: &BoxApiClient, folder_id: &String) -> FolderAllOfItemCollection {
     let response_string = api
@@ -43,7 +43,8 @@ pub async fn upload_file(
     api: &BoxApiClient,
     file: File,
     attributes: &FileUploadAttributes,
-) -> Option<String> {
+    // ) -> Option<String> {
+) -> Result<crate::models::File, Error> {
     // // read file body stream
     let stream = FramedRead::new(TokioFile::from(file), BytesCodec::new());
     let file_body = Body::wrap_stream(stream);
@@ -52,15 +53,26 @@ pub async fn upload_file(
     let some_file = multipart::Part::stream(file_body)
         .file_name("image.jpeg")
         .mime_str("application/octet-stream")
-        .ok()?;
+        .ok();
 
     // create the multipart form
     let form = multipart::Form::new()
         .text("attributes", serde_json::to_string(attributes).unwrap())
-        .part("file", some_file);
+        .part("file", some_file.unwrap());
 
     // send request
-    api.multipart(form).await
+    let response = api.multipart(form).await.unwrap();
+
+    let files: Files = serde_json::from_str(&response).unwrap();
+    files
+        .entries
+        .unwrap()
+        .into_iter()
+        .next()
+        .ok_or(Error::from(std::io::Error::new(
+            std::io::ErrorKind::Other,
+            "No file found",
+        )))
 }
 
 pub async fn download_file(
